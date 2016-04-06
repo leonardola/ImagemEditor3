@@ -74,7 +74,7 @@ public class Histogram {
         long endTime = System.nanoTime();
 
         long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
-        System.out.println("tempo sequencial: "+duration);
+        System.out.println("tempo threaded: "+duration);
 
         campoTexto.setText("Vetor de Histograma Criado");
         return CreateImagefromIntArray(colourHist);
