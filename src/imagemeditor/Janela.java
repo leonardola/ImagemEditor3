@@ -73,7 +73,6 @@ public class Janela extends JFrame {
         JMenuItem salvaArquivo = new JMenuItem("Salva imagem");
         
         salvaArquivo.addActionListener((ActionEvent e) -> {
-            // TODO Auto-generated catch block
             if (this.m_imagem == null) {
                 JOptionPane.showMessageDialog(null, "Execute algum processamento na imagem", "Erro salvando", JOptionPane.ERROR_MESSAGE);
                 
@@ -151,7 +150,7 @@ public class Janela extends JFrame {
         menuHistograma.addActionListener((ActionEvent e) -> {
           campoTexto.setText("Cria histograma"); 
             
-          this.m_imagem = editorImagem.criaHistograma(this.originalImage, this.barraProgresso, this.campoTexto);
+          this.m_imagem = Histogram.criaHistograma(this.originalImage, this.barraProgresso, this.campoTexto);
           alteraImagem(this.m_imagem);
         });
         

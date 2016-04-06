@@ -66,7 +66,7 @@ public class trataImagem {
     }
 
     public BufferedImage geraFFT(BufferedImage image, JProgressBar barraProgresso, JLabel campoTexto) {
-        boolean lowpass = true;
+
         final int RADIUS_MIN = 5;
         final int RADIUS_MAX = 100;
         final int RADIUS_INIT = 100;
@@ -104,13 +104,6 @@ public class trataImagem {
         //final Image invFourier = createImage(new MemoryImageSource(output.width, output.height, inverse.getPixels(output), 0, output.width));
         campoTexto.setText("FFT concluída");
         return localImage;
-    }
-
-    public static BufferedImage getImageFromArray(int[] pixels, int width, int height) {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        WritableRaster raster = (WritableRaster) image.getData();
-        raster.setPixels(0, 0, width, height, pixels);
-        return image;
     }
 
     public int singlePixelConvolution(BufferedImage image, int x, int y, double[][] k, int kernelWidth, int kernelHeight) {
@@ -180,132 +173,6 @@ public class trataImagem {
     
     
 
-    class maxColor {
-
-        long maxR, maxG, maxB;
-
-        public maxColor() {
-            maxR = maxG = maxB = 0;
-        }
-
-        public void compare(int R, int G, int B) {
-            if (maxR < R) {
-                maxR = R;
-            }
-            if (maxG < G) {
-                maxG = G;
-            }
-            if (maxB < B) {
-                maxB = B;
-            }
-        }
-
-        public long getMaxR() {
-            return maxR;
-        }
-
-        public long getMaxG() {
-            return maxG;
-        }
-
-        public long getMaxB() {
-            return maxB;
-        }
-
-        public long getMax() {
-            return Math.max(maxR, Math.max(maxG, maxB));
-        }
-    }
-
-    public BufferedImage criaHistograma(BufferedImage imagem, JProgressBar barraProgresso, JLabel campoTexto) {
-        final int SIZE = 256;
-
-        // Red, Green, Blue   
-        final int NUMBER_OF_COLOURS = 3;
-        final int RED = 0;
-        final int GREEN = 1;
-        final int BLUE = 2;
-
-        int w = imagem.getWidth(null);
-        int h = imagem.getHeight(null);
-        int pixel;
-        int max = 0;
-        int[][] colourHist = new int[3][];
-        
-
-
-        for (int i = 0; i < NUMBER_OF_COLOURS; i++) {
-            colourHist[i] = new int[SIZE];
-        }
-
-        // Reset all the values
-        for (int i = 0; i < NUMBER_OF_COLOURS; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                colourHist[i][j] = 0;
-            }
-        }
-        
-        campoTexto.setText("Criando o histograma");
-        for (int x = 0; x < w; x++) {
-            for (int y = 0; y < h; y++) {
-                pixel = imagem.getRGB(x, y);
-
-                colourHist[RED][getRed(pixel)]++;
-                colourHist[GREEN][getGreen(pixel)]++;
-                colourHist[BLUE][getBlue(pixel)]++;
-            }
-        }
-        campoTexto.setText("Vetor de Histograma Criado");
-        return CreateImagefromIntArray(colourHist);
-    }
-
-    /**
-     * Creates an BufferedImage from a 2D array of integers
-     *
-     * @param int[][]
-     * @return
-     */
-    public BufferedImage CreateImagefromIntArray(int[][] pixels) {
-        int BI_WIDTH, BI_HEIGHT;
-        BI_WIDTH = BI_HEIGHT = 828;
-        int largura = BI_HEIGHT / 256;
-        final int RED = 0;
-        final int GREEN = 1;
-        final int BLUE = 2;
-
-        maxColor mx = new maxColor();
-
-        
-        // Verify the major value
-        for (int i = 0; i < pixels[0].length; i++) {
-            mx.compare(pixels[RED][i], pixels[GREEN][i], pixels[BLUE][i]);
-        }
-        double ratio = (BI_HEIGHT - 100) * 1.0 / mx.getMax();
-        // Build the histogram image
-        BufferedImage bImage = new BufferedImage(BI_WIDTH, BI_HEIGHT, BufferedImage.TYPE_INT_RGB);
-
-        Graphics2D g2D = bImage.createGraphics();
-        for (int i = 0; i < 256; i++) {
-            g2D.setColor(Color.RED);
-            g2D.drawLine(20 + (i * largura), BI_HEIGHT - 20, 20 + (i * largura), BI_HEIGHT - 20 - (int) (pixels[RED][i] * ratio));
-            g2D.setColor(Color.GREEN);
-            g2D.drawLine(21 + (i * largura), BI_HEIGHT - 20, 21 + (i * largura), BI_HEIGHT - 20 - (int) (pixels[GREEN][i] * ratio));
-            g2D.setColor(Color.BLUE);
-            g2D.drawLine(22 + (i * largura), BI_HEIGHT - 20, 22 + (i * largura), BI_HEIGHT - 20 - (int) (pixels[BLUE][i] * ratio));
-
-        }
-        System.out.println("larg:" + largura + ", " + (256 * largura));
-        g2D.setBackground(Color.BLACK);
-        g2D.setColor(Color.WHITE);
-        g2D.drawLine(10, 40, 10, BI_HEIGHT - 20);
-        g2D.drawLine(BI_HEIGHT - 40, BI_HEIGHT - 20, 10, BI_HEIGHT - 20);
-
-        Font myFont = new Font("Arial", 1, 24);
-        g2D.setFont(myFont);
-        g2D.drawString("RGB Histogram", BI_HEIGHT / 2 - 56, 20);
-
-        return bImage;
-    }
 
     public BufferedImage equalizaImg(BufferedImage im, JProgressBar barraProgresso, JLabel campoTexto) {
         BufferedImage imagem = imageToBW(im);
