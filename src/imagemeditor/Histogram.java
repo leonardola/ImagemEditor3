@@ -33,9 +33,43 @@ public class Histogram {
 
         long startTime = System.nanoTime();
 
-        colourHist[RED] = countColor(pixels, RED);
-        colourHist[GREEN] = countColor(pixels, GREEN);
-        colourHist[BLUE] = countColor(pixels, BLUE);
+        Runnable redColor = new Runnable() {
+            @Override
+            public void run() {
+                colourHist[RED] = countColor(pixels, RED);
+            }
+        };
+
+        Runnable greenColor = new Runnable() {
+            @Override
+            public void run() {
+                colourHist[GREEN] = countColor(pixels, GREEN);
+            }
+        };
+
+        Runnable blueColor = new Runnable() {
+            @Override
+            public void run() {
+                colourHist[BLUE] = countColor(pixels, BLUE);
+            }
+        };
+
+        try{
+            Thread processOne = new Thread(redColor);
+            Thread processTwo = new Thread(greenColor);
+            Thread processThree = new Thread(blueColor);
+
+            processOne.start();
+            processTwo.start();
+            processThree.start();
+
+            processOne.join();
+            processTwo.join();
+            processThree.join();
+        }catch (Exception e){
+            System.out.println("erro ao sincronizar threads");
+        }
+
 
         long endTime = System.nanoTime();
 
