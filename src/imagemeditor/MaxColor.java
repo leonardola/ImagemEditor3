@@ -20,6 +20,23 @@ public class MaxColor {
         MaxSubColor maxGreenColor = new MaxSubColor(pixels[ColorConstants.GREEN_OFFSET]);
         MaxSubColor maxBlueColor = new MaxSubColor(pixels[ColorConstants.BLUE_OFFSET]);
 
+
+        try{
+            Thread processOne = new Thread(maxRedColor);
+            Thread processTwo = new Thread(maxGreenColor);
+            Thread processThree = new Thread(maxBlueColor);
+
+            processOne.start();
+            processTwo.start();
+            processThree.start();
+
+            processOne.join();
+            processTwo.join();
+            processThree.join();
+        }catch (Exception e){
+            System.out.println("Não pode executar as threads da maxcolor");
+        }
+
         maxR = maxRedColor.getMaxSubPixel();
         maxG = maxGreenColor.getMaxSubPixel();
         maxB = maxBlueColor.getMaxSubPixel();

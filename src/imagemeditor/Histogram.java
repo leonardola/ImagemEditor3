@@ -32,21 +32,21 @@ public class Histogram {
         Runnable redColor = new Runnable() {
             @Override
             public void run() {
-                colourHist[RED] = countColor(pixels, RED);
+                colourHist[ColorConstants.RED_OFFSET] = countColor(pixels, ColorConstants.RED_OFFSET);
             }
         };
 
         Runnable greenColor = new Runnable() {
             @Override
             public void run() {
-                colourHist[GREEN] = countColor(pixels, GREEN);
+                colourHist[ColorConstants.GREEN_OFFSET] = countColor(pixels, ColorConstants.GREEN_OFFSET);
             }
         };
 
         Runnable blueColor = new Runnable() {
             @Override
             public void run() {
-                colourHist[BLUE] = countColor(pixels, BLUE);
+                colourHist[ColorConstants.BLUE_OFFSET] = countColor(pixels, ColorConstants.BLUE_OFFSET);
             }
         };
 

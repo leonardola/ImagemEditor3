@@ -3,14 +3,13 @@ package imagemeditor;
 /**
  * Created by leonardoalbuquerque on 07/04/16.
  */
-public class MaxSubColor {
+public class MaxSubColor implements Runnable{
 
     private int[] subPixels;
     private int maxSubPixel = 0;
 
     MaxSubColor(int [] subPixels){
         this.subPixels = subPixels;
-        run();
     }
 
     public void run(){
