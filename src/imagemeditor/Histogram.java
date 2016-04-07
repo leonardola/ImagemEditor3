@@ -15,10 +15,6 @@ public class Histogram {
     final static int NUMBER_OF_COLOURS = 3;
     public static BufferedImage criaHistograma(BufferedImage imagem, JProgressBar barraProgresso, JLabel campoTexto) {
 
-        // Red, Green, Blue
-        final int RED = 0;
-        final int GREEN = 1;
-        final int BLUE = 2;
 
         int w = imagem.getWidth();
         int h = imagem.getHeight();
@@ -99,31 +95,31 @@ public class Histogram {
         int BI_WIDTH, BI_HEIGHT;
         BI_WIDTH = BI_HEIGHT = 828;
         int largura = BI_HEIGHT / 256;
-        final int RED = 0;
-        final int GREEN = 1;
-        final int BLUE = 2;
 
-        MaxColor mx = new MaxColor();
+        long startTime = System.nanoTime();
 
+        MaxColor mx = new MaxColor(pixels);
 
-        // Verify the major value
-        for (int i = 0; i < pixels[0].length; i++) {
-            mx.compare(pixels[RED][i], pixels[GREEN][i], pixels[BLUE][i]);
-        }
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
+        System.out.println("Max color tempo sequencial: "+duration);
+
         double ratio = (BI_HEIGHT - 100) * 1.0 / mx.getMax();
         // Build the histogram image
         BufferedImage bImage = new BufferedImage(BI_WIDTH, BI_HEIGHT, BufferedImage.TYPE_INT_RGB);
 
         Graphics2D g2D = bImage.createGraphics();
+
         for (int i = 0; i < 256; i++) {
             g2D.setColor(Color.RED);
-            g2D.drawLine(20 + (i * largura), BI_HEIGHT - 20, 20 + (i * largura), BI_HEIGHT - 20 - (int) (pixels[RED][i] * ratio));
+            g2D.drawLine(20 + (i * largura), BI_HEIGHT - 20, 20 + (i * largura), BI_HEIGHT - 20 - (int) (pixels[ColorConstants.RED_OFFSET][i] * ratio));
             g2D.setColor(Color.GREEN);
-            g2D.drawLine(21 + (i * largura), BI_HEIGHT - 20, 21 + (i * largura), BI_HEIGHT - 20 - (int) (pixels[GREEN][i] * ratio));
+            g2D.drawLine(21 + (i * largura), BI_HEIGHT - 20, 21 + (i * largura), BI_HEIGHT - 20 - (int) (pixels[ColorConstants.GREEN_OFFSET][i] * ratio));
             g2D.setColor(Color.BLUE);
-            g2D.drawLine(22 + (i * largura), BI_HEIGHT - 20, 22 + (i * largura), BI_HEIGHT - 20 - (int) (pixels[BLUE][i] * ratio));
-
+            g2D.drawLine(22 + (i * largura), BI_HEIGHT - 20, 22 + (i * largura), BI_HEIGHT - 20 - (int) (pixels[ColorConstants.BLUE_OFFSET][i] * ratio));
         }
+
         System.out.println("larg:" + largura + ", " + (256 * largura));
         g2D.setBackground(Color.BLACK);
         g2D.setColor(Color.WHITE);
