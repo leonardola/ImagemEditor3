@@ -35,7 +35,7 @@ public class Histogram {
 
         long endTime = System.nanoTime();
 
-        long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
+        long duration = (endTime - startTime);
         System.out.println("Histograma tempo sequencial: "+duration);
 
         campoTexto.setText("Vetor de Histograma Criado");
@@ -68,7 +68,7 @@ public class Histogram {
 
         long endTime = System.nanoTime();
 
-        long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
+        long duration = (endTime - startTime);
         System.out.println("Max color tempo sequencial: "+duration);
 
         double ratio = (BI_HEIGHT - 100) * 1.0 / mx.getMax();
