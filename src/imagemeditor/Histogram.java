@@ -3,7 +3,6 @@ package imagemeditor;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
 /**
@@ -12,18 +11,14 @@ import java.awt.image.WritableRaster;
 public class Histogram {
 
     final static int SUBPIXEL_MAX_VALUE = 256;
-    final static int NUMBER_OF_COLOURS = 3;
+
     public static BufferedImage criaHistograma(BufferedImage imagem, JProgressBar barraProgresso, JLabel campoTexto) {
 
-
-        int w = imagem.getWidth();
-        int h = imagem.getHeight();
         int[][] colourHist = new int[3][SUBPIXEL_MAX_VALUE];
 
-        Raster raster = imagem.getRaster();
+        WritableRaster raster = imagem.getRaster();
 
-        int[] pixels = new int[w * h * NUMBER_OF_COLOURS];
-        raster.getPixels(0, 0, w, h, pixels);
+        int[] pixels = RasterCreator.getPixelsFromRaster(raster);
 
         campoTexto.setText("Criando o histograma");
 
@@ -76,10 +71,10 @@ public class Histogram {
         return CreateImagefromIntArray(colourHist);
     }
 
-    private static int[] countColor(int[] pixels, int colorOffset){
+    private static int[] countColor(int[] pixels, int colorOffset) {
         int[] sum = new int[SUBPIXEL_MAX_VALUE];
 
-        for (int i = colorOffset; i < pixels.length; i += NUMBER_OF_COLOURS) {
+        for (int i = colorOffset; i < pixels.length; i += ColorConstants.NUMBER_OF_COLOURS) {
             sum[pixels[i]]++;
         }
 
@@ -102,8 +97,8 @@ public class Histogram {
 
         long endTime = System.nanoTime();
 
-        long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
-        System.out.println("Max color tempo sequencial: "+duration);
+        long duration = (endTime - startTime);
+        System.out.println("Max color tempo sequencial: " + duration);
 
         double ratio = (BI_HEIGHT - 100) * 1.0 / mx.getMax();
         // Build the histogram image

@@ -109,7 +109,7 @@ public class Janela extends JFrame {
         
         JMenuItem aplicarCinza = new JMenuItem("Converter para Escala de Cinza");
         aplicarCinza.addActionListener((ActionEvent e) -> {
-            this.m_imagem = editorImagem.imageToBW(this.originalImage, this.barraProgresso, this.campoTexto);
+            this.m_imagem = BlackAndWhite.imageToBW(this.originalImage, this.barraProgresso, this.campoTexto);
             alteraImagem(this.m_imagem);
         });
         imagemMenu.add(aplicarCinza);
@@ -157,7 +157,7 @@ public class Janela extends JFrame {
         JMenuItem menuThreshold = new JMenuItem("Aplica Threshold");
         menuThreshold.addActionListener((ActionEvent e) -> {
             campoTexto.setText("Aplica Threshold");
-            this.m_imagem = editorImagem.thresholdImg(this.originalImage, this.barraProgresso, this.campoTexto);
+            this.m_imagem = Threshold.thresholdImg(this.originalImage, this.barraProgresso, this.campoTexto);
             alteraImagem(this.m_imagem);
         });
         

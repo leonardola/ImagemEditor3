@@ -1,6 +1,7 @@
 package imagemeditor;
 
 import imagemeditor.fft.FFT;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -15,15 +16,11 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
 /**
- *
  * @author Cendron
  */
 public class trataImagem {
 
     private BufferedImage localImage;
-
-    public void trataImagem() {
-    }
 
     public void saveImage(BufferedImage image, File file) {
         try {
@@ -84,7 +81,7 @@ public class trataImagem {
         }
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                orig[i * height + j] = rgbToGray(image.getRGB(i, j));
+                orig[i * height + j] = BlackAndWhite.rgbToGray(image.getRGB(i, j));
                 //System.out.println("i " + i + ", j: " + j + "-->"  + (i * 6 + j ));
             }
         }
@@ -111,7 +108,7 @@ public class trataImagem {
         double tmp = 0;
         for (int i = 0; i < kernelWidth; ++i) {
             for (int j = 0; j < kernelHeight; ++j) {
-                pixel = rgbToGray(image.getRGB(x + i, y + j));
+                pixel = BlackAndWhite.rgbToGray(image.getRGB(x + i, y + j));
                 tmp = tmp + (pixel * k[i][j]);
             }
         }
@@ -134,11 +131,11 @@ public class trataImagem {
             for (int y = 0; y < h; y++) {
                 pixel = imagem.getRGB(x, y);
 
-                r = (int) (getRed(pixel) * 0.393 + getGreen(pixel) * 0.769 + getBlue(pixel) * 0.189);
-                g = (int) (getRed(pixel) * 0.349 + getGreen(pixel) * 0.686 + getBlue(pixel) * 0.168);
-                b = (int) (getRed(pixel) * 0.272 + getGreen(pixel) * 0.534 + getBlue(pixel) * 0.131);
+                r = (int) (ColorPixels.getRed(pixel) * 0.393 + ColorPixels.getGreen(pixel) * 0.769 + ColorPixels.getBlue(pixel) * 0.189);
+                g = (int) (ColorPixels.getRed(pixel) * 0.349 + ColorPixels.getGreen(pixel) * 0.686 + ColorPixels.getBlue(pixel) * 0.168);
+                b = (int) (ColorPixels.getRed(pixel) * 0.272 + ColorPixels.getGreen(pixel) * 0.534 + ColorPixels.getBlue(pixel) * 0.131);
 
-                localImage.setRGB(x, y, setPixel(0, r, g, b));
+                localImage.setRGB(x, y, ColorPixels.setPixel(0, r, g, b));
             }
         }
 
@@ -146,70 +143,42 @@ public class trataImagem {
         return localImage;
     }
 
-    public BufferedImage imageToBW(BufferedImage imagem, JProgressBar barraProgresso, JLabel campoTexto) {
-        campoTexto.setText("Convertendo para escala de Cinza...");
-        this.imageToBW(imagem);
-        barraProgresso.setValue(0);
-        campoTexto.setText("Imagem em cinza pronta");
-        return localImage;
-    }
-
-    public BufferedImage imageToBW(BufferedImage imagem) {
-        int w = imagem.getWidth(null);
-        int h = imagem.getHeight(null);
-        int pixel;
-        localImage = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
-
-        for (int x = 0; x < w; x++) {
-            for (int y = 0; y < h; y++) {
-                pixel = imagem.getRGB(x, y);
-                localImage.setRGB(x, y, rgbToGray(pixel));
-                // tmpImagem.setRGB(x, y, setPixel(getAlpha(pixel), getRed(pixel), getGreen(pixel), getBlue(pixel)));  
-            }
-        }
-
-        return localImage;
-    }
-    
-    
-
-
     public BufferedImage equalizaImg(BufferedImage im, JProgressBar barraProgresso, JLabel campoTexto) {
-        BufferedImage imagem = imageToBW(im);
+        BufferedImage imagem = BlackAndWhite.imageToBW(im);
         int i, j, k, pixel;
         long x, y;
         double mediaImagem, desvioImage;
         final float MEDIA = 160;
         float DESVIO = 150;
 
-       
+
         int w = imagem.getWidth(null);
         int h = imagem.getHeight(null);
-        
+
         localImage = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
-        
+
         campoTexto.setText("Criando o histograma da imagem em cinza");
         /* Calcula o histograma em na escala de cinza */
         k = 0;
         x = y = 0;
         for (i = 0; i < w; i++) {
             for (j = 0; j < h; j++) {
-                pixel = getGray(imagem.getRGB(i, j));
-                x +=  pixel;
-                y +=  pixel * pixel;
+                pixel = BlackAndWhite.getGray(imagem.getRGB(i, j));
+                x += pixel;
+                y += pixel * pixel;
                 k += 1;
             }
         }
         campoTexto.setText("Histograma pronto");
         /* Compute estimate - mean noise is 0 */
-        desvioImage = (double)(y - x*x/(float)k)/(float)(k-1);
+        desvioImage = (double) (y - x * x / (float) k) / (float) (k - 1);
         desvioImage = Math.sqrt(desvioImage);
-        mediaImagem = (double)(x/(float)k);
-        
+        mediaImagem = (double) (x / (float) k);
+
         campoTexto.setText("Fazendo o ajuste baseado na média");
-         for (i = 0; i < w; i++) {
+        for (i = 0; i < w; i++) {
             for (j = 0; j < h; j++) {
-                pixel = getGray(imagem.getRGB(i, j));
+                pixel = BlackAndWhite.getGray(imagem.getRGB(i, j));
                 float common = (float) Math.sqrt((DESVIO * (float) Math.pow(pixel - mediaImagem, 2)) / desvioImage);
 
                 int n;
@@ -218,64 +187,26 @@ public class trataImagem {
                 } else {
                     n = (int) (MEDIA - common);
                 }
-                
-                localImage.setRGB(i, j, setGray(n));
+
+                localImage.setRGB(i, j, BlackAndWhite.setGray(n));
             }
         }
         campoTexto.setText("Equalização pronto");
         System.out.println("Média: " + mediaImagem + ", Desvio padrão: " + desvioImage);
-        
+
         return localImage;
     }
-    
-    public BufferedImage thresholdImg(BufferedImage im, JProgressBar barraProgresso, JLabel campoTexto) {
-        BufferedImage imagem = imageToBW(im);
-        int i, j, pixel;
-        long media = 0;
-       
-        int w = imagem.getWidth(null);
-        int h = imagem.getHeight(null);
-        
-        localImage = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
-        campoTexto.setText("Criando o histograma");
-        for (i = 0; i < w; i++) {
-            for (j = 0; j < h; j++) {
-                pixel = getGray(imagem.getRGB(i, j));
-                media +=  pixel;
-            }
-        }
-        campoTexto.setText("Definindo o thresold");
-        media /= (w * h);
-        
-        // corta os pixels, conforme a media
-         for (i = 0; i < w; i++) {
-            for (j = 0; j < h; j++) {
-                pixel = getGray(imagem.getRGB(i, j));
-                
-                int n;
-                if (pixel > media) {
-                    n = 255;
-                } else {
-                    n = 0;
-                }
-                
-                localImage.setRGB(i, j, setGray(n));
-            }
-        }
-        campoTexto.setText("Thresold pronto");
-        return localImage;
-    }
-    
-        public BufferedImage resizeBilinear(BufferedImage img, int w2, int h2, JProgressBar barraProgresso, JLabel campoTexto) {
+
+    public BufferedImage resizeBilinear(BufferedImage img, int w2, int h2, JProgressBar barraProgresso, JLabel campoTexto) {
         int w, h;
         w = img.getWidth();
         h = img.getHeight();
 
         localImage = new BufferedImage(w2, h2, BufferedImage.TYPE_INT_RGB);
-        
+
         int a, b, c, d, x, y;
         float x_ratio = ((float) (w - 1)) / w2;
-        float y_ratio = ((float) (h - 1)) / h2;       
+        float y_ratio = ((float) (h - 1)) / h2;
         campoTexto.setText("Redimensionando a imagem...");
         float x_diff, y_diff, blue, red, green;
         for (int i = 0; i < h2; i++) {
@@ -284,12 +215,12 @@ public class trataImagem {
                 y = (int) (y_ratio * i);
                 x_diff = (x_ratio * j) - x;
                 y_diff = (y_ratio * i) - y;
-                
+
                 a = img.getRGB(x, y);
                 b = img.getRGB(x + 1, y);
                 c = img.getRGB(x, y + 1);
                 d = img.getRGB(x + 1, y + 1);
-  
+
                 // blue element
                 // Yb = Ab(1-w)(1-h) + Bb(w)(1-h) + Cb(h)(1-w) + Db(wh)
                 blue = (a & 0xff) * (1 - x_diff) * (1 - y_diff) + (b & 0xff) * (x_diff) * (1 - y_diff)
@@ -305,100 +236,18 @@ public class trataImagem {
                 red = ((a >> 16) & 0xff) * (1 - x_diff) * (1 - y_diff) + ((b >> 16) & 0xff) * (x_diff) * (1 - y_diff)
                         + ((c >> 16) & 0xff) * (y_diff) * (1 - x_diff) + ((d >> 16) & 0xff) * (x_diff * y_diff);
 
-                
-                localImage.setRGB(j, i, setPixel(255, (int)red, (int)green, (int)blue ));
+
+                localImage.setRGB(j, i, ColorPixels.setPixel(255, (int) red, (int) green, (int) blue));
             }
         }
         campoTexto.setText("Redimensionamento pronto");
         return localImage;
     }
-    
-    
-    private int rgbToGray(int pixel) {
-        double RED_MULT = 76.843;
-        double GRN_MULT = 151.446;
-        double BLU_MULT = 29.526;
-
-        int gray = (int) (getRed(pixel) * RED_MULT
-                + getGreen(pixel) * GRN_MULT
-                + getBlue(pixel) * BLU_MULT
-                + 0.5);
-
-        return (gray < 65536 ? gray : 65535);
-
-    }
-
-    private int setPixel(int A, int R, int G, int B) {
-        int pixel
-                = (A < 255 ? A : 255) << 24
-                | (R < 255 ? R : 255) << 16
-                | (G < 255 ? G : 255) << 8
-                | (B < 255 ? B : 255);
-
-        return pixel;
-    }
-    
-    private int getAlpha(int pixel) {
-        return (pixel >> 24) & 0xff;
-    }
-
-    private int getRed(int pixel) {
-        return (pixel >> 16) & 0xff;
-    }
-
-    private int getGreen(int pixel) {
-        return (pixel >> 8) & 0xff;
-    }
-
-    private int getBlue(int pixel) {
-        return (pixel) & 0xff;
-    }
-    
-   private int getGray(int pixel) {
-        return (pixel) & 0xff;
-    }
-   
-   private int setGray(int gray){
-       int p; 
-       p = gray > 255 ? 255 : gray;
-       p = gray < 0 ? 0 : gray;
-              
-      return setPixel(0, p, p, p);
-   }
-
-    private static int[] getPixelData(BufferedImage img, int x, int y) {
-        int argb = img.getRGB(x, y);
-
-        int rgb[] = new int[]{
-            (argb >> 16) & 0xff, //red
-            (argb >> 8) & 0xff, //green
-            (argb) & 0xff //blue
-        };
-        return rgb;
-    }
-
-    private void printImage(BufferedImage imagem) {
-        for (int x = 0; x < imagem.getWidth(); x++) {
-            for (int y = 0; y < imagem.getHeight(); y++) {
-                int pixel = imagem.getRGB(x, y);
-                printPixelARGB(pixel);
-
-            }
-        }
-    }
-
-    private void printPixelARGB(int pixel) {
-        int alpha = getAlpha(pixel);
-        int red = getRed(pixel);
-        int green = getGreen(pixel);
-        int blue = getBlue(pixel);
-        System.out.println("argb: " + alpha + ", " + red + ", " + green + ", " + blue);
-    }
 
     public static BufferedImage rescale(BufferedImage originalImage, int w, int h) {
         int finalw = w;
         int finalh = h;
-        double factor = 1.0d;
+        double factor = 1;
         if (originalImage.getWidth() > originalImage.getHeight()) {
             factor = ((double) originalImage.getHeight() / (double) originalImage.getWidth());
             finalh = (int) (finalw * factor);

@@ -1,5 +1,5 @@
 package imagemeditor;
-        
+
 public class ImagemEditor {
 
     /**
@@ -7,6 +7,6 @@ public class ImagemEditor {
      */
     public static void main(String[] args) {
         new Janela();
-     }
-    
+    }
+
 }
