@@ -63,21 +63,4 @@ public class RasterCreator {
 
         return greyPixels;
     }
-
-    /*public static int[] getGreyRasterFromImage(BufferedImage image, int[] pixels) {
-
-        int[] rgbPixels = getRgbRasterFromImage(image, pixels);
-        int[] greyPixels = new int[rgbPixels.length];
-
-        int[] greyPixels = new int[image.getHeight() * image.getWidth()];
-
-        for (int i = 0; i < pixels.length / 3; i++) {
-
-            Color color = new Color(pixels[i * 3], pixels[i * 3 + 1], pixels[i * 3 + 2]);
-
-            greyPixels[i] = color.getRGB();
-        }
-
-        return greyPixels;
-    }*/
 }

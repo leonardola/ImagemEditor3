@@ -45,7 +45,7 @@ public class Histogram {
             }
         };
 
-        try{
+        try {
             Thread processOne = new Thread(redColor);
             Thread processTwo = new Thread(greenColor);
             Thread processThree = new Thread(blueColor);
@@ -57,15 +57,15 @@ public class Histogram {
             processOne.join();
             processTwo.join();
             processThree.join();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println("erro ao sincronizar threads");
         }
 
 
         long endTime = System.nanoTime();
 
-        long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
-        System.out.println("tempo threaded: "+duration);
+        long duration = (endTime - startTime);
+        System.out.println("Tempo threaded: " + duration);
 
         campoTexto.setText("Vetor de Histograma Criado");
         return CreateImagefromIntArray(colourHist);

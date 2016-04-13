@@ -22,6 +22,25 @@ public class trataImagem {
 
     private BufferedImage localImage;
 
+    public static BufferedImage rescale(BufferedImage originalImage, int w, int h) {
+        int finalw = w;
+        int finalh = h;
+        double factor = 1;
+        if (originalImage.getWidth() > originalImage.getHeight()) {
+            factor = ((double) originalImage.getHeight() / (double) originalImage.getWidth());
+            finalh = (int) (finalw * factor);
+        } else {
+            factor = ((double) originalImage.getWidth() / (double) originalImage.getHeight());
+            finalw = (int) (finalh * factor);
+        }
+
+        BufferedImage resizedImage = new BufferedImage(finalw, finalh, originalImage.getType());
+        Graphics2D g = resizedImage.createGraphics();
+        g.drawImage(originalImage, 0, 0, finalw, finalh, null);
+        g.dispose();
+        return resizedImage;
+    }
+
     public void saveImage(BufferedImage image, File file) {
         try {
             ImageIO.write(image, "png", new File(file.getAbsolutePath()));
@@ -29,11 +48,6 @@ public class trataImagem {
             Logger.getLogger(trataImagem.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }
-
-    public BufferedImage getImage() {
-
-        return this.localImage;
     }
 
     public BufferedImage convolution2D(BufferedImage image, double[][] kernel, JProgressBar barraProgresso, JLabel campoTexto) {
@@ -242,24 +256,5 @@ public class trataImagem {
         }
         campoTexto.setText("Redimensionamento pronto");
         return localImage;
-    }
-
-    public static BufferedImage rescale(BufferedImage originalImage, int w, int h) {
-        int finalw = w;
-        int finalh = h;
-        double factor = 1;
-        if (originalImage.getWidth() > originalImage.getHeight()) {
-            factor = ((double) originalImage.getHeight() / (double) originalImage.getWidth());
-            finalh = (int) (finalw * factor);
-        } else {
-            factor = ((double) originalImage.getWidth() / (double) originalImage.getHeight());
-            finalw = (int) (finalh * factor);
-        }
-
-        BufferedImage resizedImage = new BufferedImage(finalw, finalh, originalImage.getType());
-        Graphics2D g = resizedImage.createGraphics();
-        g.drawImage(originalImage, 0, 0, finalw, finalh, null);
-        g.dispose();
-        return resizedImage;
     }
 }

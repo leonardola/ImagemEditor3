@@ -64,5 +64,4 @@ public class Threshold {
         return medium;
     }
 
-
 }
