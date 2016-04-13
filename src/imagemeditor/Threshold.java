@@ -2,6 +2,8 @@ package imagemeditor;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 
 /**
  * Created by leonardoalbuquerque on 08/04/16.
@@ -9,40 +11,58 @@ import java.awt.image.BufferedImage;
 public class Threshold {
 
     public static BufferedImage thresholdImg(BufferedImage im, JProgressBar barraProgresso, JLabel campoTexto) {
-        BufferedImage imagem = BlackAndWhite.imageToBW(im);
-        int i, j, pixel;
-        long media = 0;
+        BufferedImage image = BlackAndWhite.imageToBW(im);
 
-        int w = imagem.getWidth(null);
-        int h = imagem.getHeight(null);
+        int width = image.getWidth();
+        int height = image.getHeight();
 
-        BufferedImage localImage = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
         campoTexto.setText("Criando o histograma");
-        for (i = 0; i < w; i++) {
-            for (j = 0; j < h; j++) {
-                pixel = BlackAndWhite.getGray(imagem.getRGB(i, j));
-                media += pixel;
-            }
-        }
+
+        WritableRaster raster = image.getRaster();
+
+        int[] pixels = RasterCreator.getPixelsFromRaster(raster, width, height);
+        int[] greyPixels = RasterCreator.getGreyRasterFromImage(image, pixels);
+
+        long media = getGreyHistogramMedium(image, greyPixels);
+
         campoTexto.setText("Definindo o thresold");
-        media /= (w * h);
 
-        // corta os pixels, conforme a media
-        for (i = 0; i < w; i++) {
-            for (j = 0; j < h; j++) {
-                pixel = BlackAndWhite.getGray(imagem.getRGB(i, j));
-
-                int n;
-                if (pixel > media) {
-                    n = 255;
-                } else {
-                    n = 0;
-                }
-
-                localImage.setRGB(i, j, BlackAndWhite.setGray(n));
+        for (int i = 0; i < greyPixels.length; i++) {
+            if (greyPixels[i] > media) {
+                pixels[i * 3] = 255;
+                pixels[i * 3 + 1] = 255;
+                pixels[i * 3 + 2] = 255;
+            } else {
+                pixels[i * 3] = 0;
+                pixels[i * 3 + 1] = 0;
+                pixels[i * 3 + 2] = 0;
             }
         }
+
+        BufferedImage localImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+        WritableRaster localRaster = localImage.getRaster();
+
+        localRaster.setPixels(0, 0, width, height, pixels);
+
         campoTexto.setText("Thresold pronto");
         return localImage;
     }
+
+    private static long getGreyHistogramMedium(BufferedImage image, int[] greyPixels) {
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        long medium = 0;
+
+        for (int i = 0; i < greyPixels.length; i++) {
+            medium += greyPixels[i];
+        }
+
+        medium /= height * width;
+
+        return medium;
+    }
+
+
 }
