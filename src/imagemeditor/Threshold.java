@@ -27,6 +27,8 @@ public class Threshold {
 
         campoTexto.setText("Definindo o thresold");
 
+        long startTime = System.nanoTime();
+
         for (int i = 0; i < greyPixels.length; i++) {
             if (greyPixels[i] > media) {
                 pixels[i * 3] = 255;
@@ -38,6 +40,11 @@ public class Threshold {
                 pixels[i * 3 + 2] = 0;
             }
         }
+
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime);
+        System.out.println("Tempo sequencial de threshold: " + duration);
 
         BufferedImage localImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
         WritableRaster localRaster = localImage.getRaster();
