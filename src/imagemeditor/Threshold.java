@@ -62,9 +62,17 @@ public class Threshold {
 
         long medium = 0;
 
+        long startTime = System.nanoTime();
+
         for (int i = 0; i < greyPixels.length; i++) {
             medium += greyPixels[i];
         }
+
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime);
+        System.out.println("Tempo sequencial criação média: " + duration);
+
 
         medium /= height * width;
 
