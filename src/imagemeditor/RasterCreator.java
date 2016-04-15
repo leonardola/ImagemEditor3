@@ -8,6 +8,14 @@ import java.awt.image.WritableRaster;
  */
 public class RasterCreator {
 
+    private static void getPartialGreyRasterFromImage(int[] greyPixels, int[] rgbPixels, int start, int end) {
+
+        for (int i = start; i < end; i++) {
+            greyPixels[i] = BlackAndWhite.getGray(rgbPixels[i]);
+        }
+
+    }
+
     public static int[] getPixelsFromRaster(WritableRaster raster, int width, int height) {
 
         int[] pixels = new int[width * height * ColorConstants.NUMBER_OF_COLOURS];
@@ -66,14 +74,47 @@ public class RasterCreator {
 
         long startTime = System.nanoTime();
 
-        for (int i = 0; i < rgbPixels.length; i++) {
-            greyPixels[i] = BlackAndWhite.getGray(rgbPixels[i]);
+        int numberOfCores = ThreadConstants.NUMBER_OF_CORES;
+
+        Thread[] partialGreyRasterThreads = new Thread[numberOfCores];
+
+        int chunkSize = rgbPixels.length / numberOfCores;
+
+        int start = 0;
+        int end = chunkSize;
+
+        for (int i = 0; i < numberOfCores; i++) {
+
+            final int startFinal = start;
+            final int endFinal = end;
+
+            Runnable partial = new Runnable() {
+                @Override
+                public void run() {
+                    getPartialGreyRasterFromImage(greyPixels, rgbPixels, startFinal, endFinal);
+                }
+            };
+
+            partialGreyRasterThreads[i] = new Thread(partial);
+            partialGreyRasterThreads[i].start();
+
+            start = end;
+            end += chunkSize;
+
+        }
+
+        for (int i = 0; i < numberOfCores; i++) {
+            try{
+                partialGreyRasterThreads[i].join();
+            }catch (Exception e){
+                System.out.println("Erro ao sincronizar thread de criação de raster preto e branco");
+            }
         }
 
         long endTime = System.nanoTime();
 
         long duration = (endTime - startTime);
-        System.out.println("Tempo sequencial de criacao do array preto e branco: " + duration);
+        System.out.println("Tempo threaded de criacao do array preto e branco: " + duration);
 
         return greyPixels;
     }
