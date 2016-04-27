@@ -164,7 +164,7 @@ public class Janela extends JFrame {
         JMenuItem menuEqualiza = new JMenuItem("Equaliza Imagem");
         menuEqualiza.addActionListener((ActionEvent e) -> {
             campoTexto.setText("Equaliza Imagem");
-            this.m_imagem = editorImagem.equalizaImg(this.originalImage, this.barraProgresso, this.campoTexto);
+            this.m_imagem = Equalize.equalizaImg(this.originalImage, this.barraProgresso, this.campoTexto);
             alteraImagem(this.m_imagem);
         });
         

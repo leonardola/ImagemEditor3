@@ -41,14 +41,16 @@ public class RasterCreator {
     public static int[] getRgbRasterFromImage(BufferedImage image, int[] pixels) {
         int numberOfPixels = image.getHeight() * image.getWidth();
 
-        //int[] alphaPixels = RasterCreator.getAlphaRasterFromImage(image);
-
         int[] rgb = new int[numberOfPixels];
 
         long startTime = System.nanoTime();
 
         for (int i = 0; i < numberOfPixels; i++) {
-            rgb[i] = 0xFF000000 | (pixels[i * 3] << 16) | (pixels[i * 3 + 1] << 8) | (pixels[i * 3 + 2] << 0);
+            rgb[i] = ColorPixels.getRgbPixelValue(
+                    pixels[i * 3],
+                    pixels[i * 3 + 1],
+                    pixels[i * 3 + 2]
+            );
         }
 
         long endTime = System.nanoTime();

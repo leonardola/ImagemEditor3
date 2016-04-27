@@ -18,12 +18,15 @@ public class ColorPixels {
     }
 
     public static int setPixel(int A, int R, int G, int B) {
-        int pixel
-                = (A < 255 ? A : 255) << 24
+        int pixel = (A < 255 ? A : 255) << 24
                 | (R < 255 ? R : 255) << 16
                 | (G < 255 ? G : 255) << 8
                 | (B < 255 ? B : 255);
 
         return pixel;
+    }
+
+    public static int getRgbPixelValue(int red, int green, int blue) {
+        return 0xFF000000 | (red << 16) | (green << 8) | blue;
     }
 }

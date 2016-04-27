@@ -2,11 +2,8 @@ package imagemeditor;
 
 import imagemeditor.fft.FFT;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -100,12 +97,10 @@ public class trataImagem {
         }
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                orig[i * height + j] = BlackAndWhite.rgbToGray(image.getRGB(i, j));
-                //System.out.println("i " + i + ", j: " + j + "-->"  + (i * 6 + j ));
+                orig[i * height + j] = BlackAndWhite.rgbToGrayScale(image.getRGB(i, j));
             }
         }
         FFT fft = new FFT(orig, width, height, campoTexto);
-        //  fft.intermediate = FreqFilter.filter(fft.intermediate,lowpass, radius);
 
         finalImage = fft.getPixels();
 
@@ -115,9 +110,7 @@ public class trataImagem {
                 localImage.setRGB(i, j, finalImage[i * height + j]);
             }
         }
-        // TwoDArray output = inverse.transform(fft.intermediate);
 
-        //final Image invFourier = createImage(new MemoryImageSource(output.width, output.height, inverse.getPixels(output), 0, output.width));
         campoTexto.setText("FFT concluída");
         return localImage;
     }
@@ -127,16 +120,14 @@ public class trataImagem {
         double tmp = 0;
         for (int i = 0; i < kernelWidth; ++i) {
             for (int j = 0; j < kernelHeight; ++j) {
-                pixel = BlackAndWhite.rgbToGray(image.getRGB(x + i, y + j));
+                pixel = BlackAndWhite.rgbToGrayScale(image.getRGB(x + i, y + j));
                 tmp = tmp + (pixel * k[i][j]);
             }
         }
-        //return setPixel(0, (int) red/257, (int) green/257, (int) blue/257)) ;
         return (int) tmp;
     }
 
     public BufferedImage applySepia(BufferedImage imagem, JProgressBar barraProgresso, JLabel campoTexto) {
-        int i;
         int w = imagem.getWidth(null);
         int h = imagem.getHeight(null);
         int r, g, b, pixel;
@@ -159,60 +150,6 @@ public class trataImagem {
         }
 
         campoTexto.setText("Imagem em sepia pronta");
-        return localImage;
-    }
-
-    public BufferedImage equalizaImg(BufferedImage im, JProgressBar barraProgresso, JLabel campoTexto) {
-        BufferedImage imagem = BlackAndWhite.imageToBW(im);
-        int i, j, k, pixel;
-        long x, y;
-        double mediaImagem, desvioImage;
-        final float MEDIA = 160;
-        float DESVIO = 150;
-
-
-        int w = imagem.getWidth(null);
-        int h = imagem.getHeight(null);
-
-        localImage = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
-
-        campoTexto.setText("Criando o histograma da imagem em cinza");
-        /* Calcula o histograma em na escala de cinza */
-        k = 0;
-        x = y = 0;
-        for (i = 0; i < w; i++) {
-            for (j = 0; j < h; j++) {
-                pixel = BlackAndWhite.getGray(imagem.getRGB(i, j));
-                x += pixel;
-                y += pixel * pixel;
-                k += 1;
-            }
-        }
-        campoTexto.setText("Histograma pronto");
-        /* Compute estimate - mean noise is 0 */
-        desvioImage = (double) (y - x * x / (float) k) / (float) (k - 1);
-        desvioImage = Math.sqrt(desvioImage);
-        mediaImagem = (double) (x / (float) k);
-
-        campoTexto.setText("Fazendo o ajuste baseado na média");
-        for (i = 0; i < w; i++) {
-            for (j = 0; j < h; j++) {
-                pixel = BlackAndWhite.getGray(imagem.getRGB(i, j));
-                float common = (float) Math.sqrt((DESVIO * (float) Math.pow(pixel - mediaImagem, 2)) / desvioImage);
-
-                int n;
-                if (pixel > mediaImagem) {
-                    n = (int) (MEDIA + common);
-                } else {
-                    n = (int) (MEDIA - common);
-                }
-
-                localImage.setRGB(i, j, BlackAndWhite.setGray(n));
-            }
-        }
-        campoTexto.setText("Equalização pronto");
-        System.out.println("Média: " + mediaImagem + ", Desvio padrão: " + desvioImage);
-
         return localImage;
     }
 

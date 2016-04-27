@@ -1,8 +1,8 @@
 package imagemeditor;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 
 /**
  * Created by leonardoalbuquerque on 08/04/16.
@@ -26,14 +26,14 @@ public class BlackAndWhite {
         for (int x = 0; x < w; x++) {
             for (int y = 0; y < h; y++) {
                 pixel = imagem.getRGB(x, y);
-                localImage.setRGB(x, y, rgbToGray(pixel));
+                localImage.setRGB(x, y, rgbToGrayScale(pixel));
             }
         }
 
         return localImage;
     }
 
-    public static int rgbToGray(int pixel) {
+    public static int rgbToGrayScale(int pixel) {
         double RED_MULT = 76.843;
         double GRN_MULT = 151.446;
         double BLU_MULT = 29.526;
