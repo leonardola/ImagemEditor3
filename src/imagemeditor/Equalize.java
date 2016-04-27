@@ -24,8 +24,8 @@ public class Equalize {
         BufferedImage outputImage = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
 
         campoTexto.setText("Criando o histograma da imagem em cinza");
-        /* Calcula o histograma em escala de cinza */
 
+        /* Calcula o histograma em escala de cinza */
         long startTime = System.nanoTime();
 
         long[] partialValues = createPartialHistogram(0, h, image);
@@ -47,6 +47,8 @@ public class Equalize {
 
         campoTexto.setText("Fazendo o ajuste baseado na média");
 
+
+        //média parcial
         startTime = System.nanoTime();
 
         ajustPartialMedium(0, h, mediaImagem, desvioImage, image, outputImage);
