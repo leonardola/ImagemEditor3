@@ -17,18 +17,16 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- *
  * @author Cendron Date 26/02/2016
  */
 public class Janela extends JFrame {
-
-    private JDesktopPane janelaPrincipal;
 
     private final JProgressBar barraProgresso = new JProgressBar();
     private final JButton botaoCancela = new JButton("Cancelar");
     private final JLabel campoTexto = new JLabel();
     private final ImageIcon imageIcon = new ImageIcon();
     private final JLabel campoImagem = new JLabel();
+    private JDesktopPane janelaPrincipal;
     private BufferedImage m_imagem, originalImage;
 
     private trataImagem editorImagem;
@@ -47,13 +45,13 @@ public class Janela extends JFrame {
                 JFileChooser chooser = new JFileChooser();
                 FileNameExtensionFilter filter = new FileNameExtensionFilter(
                         "JPG, PNG & GIF Images", "jpg", "gif", "jpeg", "png");
-                
+
                 chooser.setFileFilter(filter);
                 int returnVal = chooser.showOpenDialog(null);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     try {
                         File file = chooser.getSelectedFile();
-                        
+
                         campoTexto.setText("Abrindo: " + file.getName());
                         if (file == null) {
                             return;
@@ -65,17 +63,17 @@ public class Janela extends JFrame {
                         Logger.getLogger(Janela.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
-                     campoTexto.setText("Usuário cancelou");
+                    campoTexto.setText("Usuário cancelou");
                 }
             }
         });
-        
+
         JMenuItem salvaArquivo = new JMenuItem("Salva imagem");
-        
+
         salvaArquivo.addActionListener((ActionEvent e) -> {
             if (this.m_imagem == null) {
                 JOptionPane.showMessageDialog(null, "Execute algum processamento na imagem", "Erro salvando", JOptionPane.ERROR_MESSAGE);
-                
+
 
             } else {
                 campoTexto.setText("Salvando imagem");
@@ -96,9 +94,9 @@ public class Janela extends JFrame {
         arquivoMenu.add(salvaArquivo);
 
         barraOpcoes.add(arquivoMenu);
-        
+
         JMenu imagemMenu = new JMenu("Editar Imagem");
-        
+
         JMenuItem aplicarImagemOriginal = new JMenuItem("Imagem original");
         aplicarImagemOriginal.addActionListener((ActionEvent e) -> {
             alteraImagem(this.originalImage);
@@ -106,20 +104,20 @@ public class Janela extends JFrame {
             campoTexto.setText("Imagem original");
         });
         imagemMenu.add(aplicarImagemOriginal);
-        
+
         JMenuItem aplicarCinza = new JMenuItem("Converter para Escala de Cinza");
         aplicarCinza.addActionListener((ActionEvent e) -> {
             this.m_imagem = BlackAndWhite.imageToBW(this.originalImage, this.barraProgresso, this.campoTexto);
             alteraImagem(this.m_imagem);
         });
         imagemMenu.add(aplicarCinza);
-        
+
         JMenuItem aplicarSepia = new JMenuItem("Aplicar Sépia");
         aplicarSepia.addActionListener((ActionEvent e) -> {
             this.m_imagem = editorImagem.applySepia(this.originalImage, this.barraProgresso, this.campoTexto);
             alteraImagem(this.m_imagem);
         });
-        
+
         JMenuItem aplicarConvolucao = new JMenuItem("Aplicar Convolução");
         aplicarConvolucao.addActionListener((ActionEvent e) -> {
              /*
@@ -127,55 +125,55 @@ public class Janela extends JFrame {
             Outros ainda podem ser encontrados na internet.        
             */
             double[][] kernel = { // Operador de borda de Sobel
-                {-1, -2, -1},
-                {1, -4, 1},
-                {1, 2, 1}
+                    {-1, -2, -1},
+                    {1, -4, 1},
+                    {1, 2, 1}
             };
-            
-           this.m_imagem = editorImagem.convolution2D(this.originalImage, kernel, this.barraProgresso, this.campoTexto);
+
+            this.m_imagem = editorImagem.convolution2D(this.originalImage, kernel, this.barraProgresso, this.campoTexto);
             alteraImagem(this.m_imagem);
         });
-        
+
         JMenuItem menuFFT = new JMenuItem("Realiza Transformação de Fourier");
         menuFFT.addActionListener((ActionEvent e) -> {
-          campoTexto.setText("FFT inicializado"); 
-            
-          this.m_imagem = editorImagem.geraFFT(this.originalImage, this.barraProgresso, this.campoTexto);
-          alteraImagem(this.m_imagem);
+            campoTexto.setText("FFT inicializado");
+
+            this.m_imagem = editorImagem.geraFFT(this.originalImage, this.barraProgresso, this.campoTexto);
+            alteraImagem(this.m_imagem);
         });
-        
+
         // Novas funcionalidades: 
-        
+
         JMenuItem menuHistograma = new JMenuItem("Cria Histograma");
         menuHistograma.addActionListener((ActionEvent e) -> {
-          campoTexto.setText("Cria histograma"); 
-            
-          this.m_imagem = Histogram.criaHistograma(this.originalImage, this.barraProgresso, this.campoTexto);
-          alteraImagem(this.m_imagem);
+            campoTexto.setText("Cria histograma");
+
+            this.m_imagem = Histogram.criaHistograma(this.originalImage, this.barraProgresso, this.campoTexto);
+            alteraImagem(this.m_imagem);
         });
-        
+
         JMenuItem menuThreshold = new JMenuItem("Aplica Threshold");
         menuThreshold.addActionListener((ActionEvent e) -> {
             campoTexto.setText("Aplica Threshold");
             this.m_imagem = Threshold.thresholdImg(this.originalImage, this.barraProgresso, this.campoTexto);
             alteraImagem(this.m_imagem);
         });
-        
+
         JMenuItem menuEqualiza = new JMenuItem("Equaliza Imagem");
         menuEqualiza.addActionListener((ActionEvent e) -> {
             campoTexto.setText("Equaliza Imagem");
-            this.m_imagem = editorImagem.equalizaImg(this.originalImage, this.barraProgresso, this.campoTexto);
+            this.m_imagem = Equalize.equalizeImg(this.originalImage, this.barraProgresso, this.campoTexto);
             alteraImagem(this.m_imagem);
         });
-        
+
         JMenuItem menuRedimensiona = new JMenuItem("Redimensiona Imagem");
         menuRedimensiona.addActionListener((ActionEvent e) -> {
             campoTexto.setText("Redimensiona Imagem");
             String inputValue = JOptionPane.showInputDialog("Digite o fator de Ampliação/redução");
             double fator = Double.parseDouble(inputValue);
             if (fator > 0) {
-                this.m_imagem = editorImagem.resizeBilinear(this.originalImage, 
-                        (int) (this.originalImage.getWidth() * fator), 
+                this.m_imagem = editorImagem.resizeBilinear(this.originalImage,
+                        (int) (this.originalImage.getWidth() * fator),
                         (int) (this.originalImage.getHeight() * fator),
                         this.barraProgresso, this.campoTexto);
 
@@ -183,8 +181,7 @@ public class Janela extends JFrame {
             }
         });
 
-        
-        
+
         imagemMenu.add(aplicarImagemOriginal);
         imagemMenu.add(aplicarCinza);
         imagemMenu.add(aplicarSepia);
@@ -195,11 +192,11 @@ public class Janela extends JFrame {
         imagemMenu.add(menuThreshold);
         imagemMenu.add(menuEqualiza);
         imagemMenu.add(menuRedimensiona);
-        
-        
-        barraOpcoes.add(imagemMenu);       
+
+
+        barraOpcoes.add(imagemMenu);
         setJMenuBar(barraOpcoes);
-        
+
         // Painel de informações
         JPanel infoPanel = new JPanel(new GridLayout(1, 3, 10, 10));
 
@@ -221,14 +218,13 @@ public class Janela extends JFrame {
 
         add(infoPanel, BorderLayout.SOUTH);
         add(campoImagem, BorderLayout.CENTER);
-        
+
         this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
                 // This is only called when the user releases the mouse button.
-                if (m_imagem != null){
+                if (m_imagem != null) {
                     alteraImagem(m_imagem);
-                }
-                else if(originalImage != null){
+                } else if (originalImage != null) {
                     alteraImagem(originalImage);
                 }
             }
@@ -250,9 +246,9 @@ public class Janela extends JFrame {
         campoImagem.setIcon(imageIcon);
 
     }
-    
-    public void alteraTexto(String texto){
-         this.campoTexto.setText(texto);
+
+    public void alteraTexto(String texto) {
+        this.campoTexto.setText(texto);
     }
 
 }
