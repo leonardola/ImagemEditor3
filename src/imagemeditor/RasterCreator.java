@@ -41,8 +41,6 @@ public class RasterCreator {
     public static int[] getRgbRasterFromImage(BufferedImage image, int[] pixels) {
         int numberOfPixels = image.getHeight() * image.getWidth();
 
-        //int[] alphaPixels = RasterCreator.getAlphaRasterFromImage(image);
-
         int[] rgb = new int[numberOfPixels];
 
         long startTime = System.nanoTime();
