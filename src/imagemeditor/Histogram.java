@@ -98,7 +98,7 @@ public class Histogram {
         long endTime = System.nanoTime();
 
         long duration = (endTime - startTime);
-        System.out.println("Max color tempo sequencial: " + duration);
+        System.out.println("Max color tempo threaded: " + duration);
 
         double ratio = (BI_HEIGHT - 100) * 1.0 / mx.getMax();
         // Build the histogram image
